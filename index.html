@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calmy — AI Mental Health Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:15px;scroll-behavior:smooth}
+ 
+:root{
+  --bg:#f5f3ff;
+  --surface:#ffffff;
+  --surface2:#f0ecfc;
+  --surface3:#e8e2f8;
+  --border:#ddd6f7;
+  --border2:#c9bff0;
+  --text:#1a1030;
+  --text2:#5a4d7a;
+  --text3:#9b8fc0;
+  --accent-purple:#7c5cbf;
+  --accent-purple-light:#CBAACB;
+  --accent-blue:#A7C7E7;
+  --accent-blue-dark:#5a8fb5;
+  --accent-green:#A8E6CF;
+  --accent-green-dark:#3a9e75;
+  --alert:#FF6B6B;
+  --alert-dark:#cc3333;
+  --nav-h:60px;
+  --sidebar-w:220px;
+  --radius:14px;
+  --radius-sm:9px;
+  --shadow:0 2px 16px rgba(100,80,180,0.08);
+  --shadow-card:0 1px 6px rgba(100,80,180,0.06);
+  --font-body:'DM Sans',sans-serif;
+  --font-display:'Fraunces',serif;
+  --transition:0.22s cubic-bezier(.4,0,.2,1);
+}
+ 
+.dark{
+  --bg:#13111f;
+  --surface:#1c1a2e;
+  --surface2:#252340;
+  --surface3:#2e2b50;
+  --border:#302c50;
+  --border2:#433d6a;
+  --text:#ede8ff;
+  --text2:#a89cc8;
+  --text3:#5e5680;
+  --accent-purple:#9f7fe0;
+  --shadow:0 2px 16px rgba(0,0,0,0.3);
+  --shadow-card:0 1px 6px rgba(0,0,0,0.2);
+}
+ 
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  transition:background var(--transition),color var(--transition);
+}
+ 
+/* ===== NAVBAR ===== */
+.navbar{
+  position:fixed;top:0;left:0;right:0;
+  height:var(--nav-h);
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;
+  z-index:900;
+  transition:background var(--transition),border-color var(--transition);
+}
+.nav-logo{
+  font-family:var(--font-display);
+  font-size:22px;
+  font-weight:300;
+  font-style:italic;
+  color:var(--accent-purple);
+  cursor:pointer;
+  letter-spacing:-0.3px;
+  text-decoration:none;
+}
+.nav-links{display:flex;gap:2px;align-items:center}
+.nav-link{
+  padding:7px 14px;
+  border-radius:var(--radius-sm);
+  border:none;background:none;
+  color:var(--text2);
+  font-family:var(--font-body);
+  font-size:14px;
+  cursor:pointer;
+  transition:background var(--transition),color var(--transition);
+}
+.nav-link:hover,.nav-link.active{background:var(--surface2);color:var(--text)}
+.nav-controls{display:flex;align-items:center;gap:10px}
+ 
+.toggle-pill{
+  display:flex;align-items:center;gap:7px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:20px;padding:5px 12px;
+  cursor:pointer;font-size:12px;
+  color:var(--text2);
+  font-family:var(--font-body);
+  transition:background var(--transition),border-color var(--transition);
+}
+.toggle-pill:hover{background:var(--surface3)}
+.toggle-dot{
+  width:14px;height:14px;border-radius:50%;
+  background:var(--accent-purple);
+  transition:background var(--transition);
+}
+ 
+.btn-nav{
+  padding:7px 18px;
+  border-radius:var(--radius-sm);
+  border:1.5px solid var(--border2);
+  background:none;color:var(--text2);
+  font-family:var(--font-body);font-size:13px;
+  cursor:pointer;transition:all var(--transition);
+}
+.btn-nav:hover{background:var(--surface2);color:var(--text);border-color:var(--accent-purple)}
+ 
+/* ===== SCREENS ===== */
+.page{display:none;min-height:100vh;padding-top:var(--nav-h)}
+.page.active{display:block}
+ 
+/* ===== LAYOUT WITH SIDEBAR ===== */
+.app-layout{display:flex;min-height:calc(100vh - var(--nav-h))}
+.sidebar{
+  width:var(--sidebar-w);
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  padding:20px 12px;
+  position:sticky;
+  top:var(--nav-h);
+  height:calc(100vh - var(--nav-h));
+  overflow-y:auto;
+  flex-shrink:0;
+  transition:background var(--transition),border-color var(--transition);
+}
+.sidebar-section{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);padding:0 10px;margin:16px 0 6px}
+.sidebar-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:var(--radius-sm);
+  cursor:pointer;color:var(--text2);
+  font-size:14px;margin-bottom:2px;
+  transition:background var(--transition),color var(--transition);
+  border:none;background:none;width:100%;text-align:left;
+  font-family:var(--font-body);
+}
+.sidebar-item:hover{background:var(--surface2);color:var(--text)}
+.sidebar-item.active{background:var(--surface2);color:var(--accent-purple);font-weight:500}
+.sidebar-icon{font-size:16px;width:20px;text-align:center}
+.main-content{flex:1;padding:28px;overflow-y:auto}
+ 
+/* ===== BUTTONS ===== */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:9px 20px;border-radius:var(--radius-sm);
+  border:none;cursor:pointer;
+  font-family:var(--font-body);font-size:14px;font-weight:400;
+  transition:all var(--transition);
+}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--accent-purple);color:#fff}
+.btn-primary:hover{opacity:.88}
+.btn-outline{
+  background:none;
+  border:1px solid var(--border2);
+  color:var(--text2);
+}
+.btn-outline:hover{background:var(--surface2);color:var(--text)}
+.btn-green{background:var(--accent-green-dark);color:#fff}
+.btn-green:hover{opacity:.88}
+.btn-blue{background:var(--accent-blue-dark);color:#fff}
+.btn-blue:hover{opacity:.88}
+.btn-alert{background:var(--alert);color:#fff}
+.btn-alert:hover{opacity:.88}
+.btn-danger{background:#7a1a1a;color:#fff}
+.btn-danger:hover{opacity:.88}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:8px}
+.btn-lg{padding:13px 32px;font-size:16px;border-radius:var(--radius)}
+.btn-block{width:100%}
+ 
+/* ===== CARDS ===== */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:18px;
+  box-shadow:var(--shadow-card);
+  transition:background var(--transition),border-color var(--transition);
+}
+.card-sm{padding:12px 14px;border-radius:var(--radius-sm)}
+.card-hover{cursor:pointer;transition:all var(--transition)}
+.card-hover:hover{border-color:var(--border2);box-shadow:var(--shadow);transform:translateY(-1px)}
+ 
+/* ===== FORMS ===== */
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;letter-spacing:.3px}
+.form-input{
+  width:100%;padding:10px 14px;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  background:var(--surface2);
+  color:var(--text);
+  font-family:var(--font-body);font-size:14px;
+  outline:none;
+  transition:border-color var(--transition),background var(--transition);
+}
+.form-input:focus{border-color:var(--accent-purple);background:var(--surface)}
+.form-input::placeholder{color:var(--text3)}
+textarea.form-input{resize:vertical;min-height:80px;line-height:1.5}
+select.form-input{cursor:pointer}
+ 
+/* ===== GRID ===== */
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+ 
+/* ===== TAGS / BADGES ===== */
+.tag{
+  display:inline-block;padding:3px 10px;
+  border-radius:20px;font-size:11px;font-weight:500;
+}
+.tag-purple{background:var(--surface2);color:var(--accent-purple);border:1px solid var(--border)}
+.tag-green{background:#d4f4e6;color:#0f5a3a}
+.tag-blue{background:#dceef9;color:#1a4a6b}
+.tag-low{background:#A8E6CF;color:#0a3d26}
+.tag-med{background:#FAC775;color:#4a2a00}
+.tag-high{background:#F7C1C1;color:#5a1010}
+.dark .tag-low{background:#1a4a35;color:#A8E6CF}
+.dark .tag-med{background:#4a3010;color:#FAC775}
+.dark .tag-high{background:#4a1515;color:#F7C1C1}
+ 
+/* ===== SECTION TITLE ===== */
+.section-title{
+  font-family:var(--font-display);
+  font-size:20px;font-weight:300;font-style:italic;
+  color:var(--text);margin-bottom:18px;
+}
+.page-title{
+  font-size:24px;font-weight:300;
+  font-family:var(--font-display);font-style:italic;
+  margin-bottom:4px;
+}
+ 
+/* ===== HERO SECTION ===== */
+.hero{
+  min-height:calc(100vh - var(--nav-h));
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:40px 24px;
+  position:relative;overflow:hidden;
+}
+.hero-icon{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent-purple-light),var(--accent-blue));
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;margin:0 auto 24px;
+}
+.hero h1{
+  font-family:var(--font-display);
+  font-size:clamp(38px,6vw,56px);
+  font-weight:300;font-style:italic;
+  color:var(--text);line-height:1.15;
+  margin-bottom:16px;
+}
+.hero h1 span{color:var(--accent-purple)}
+.hero p{
+  font-size:16px;color:var(--text2);
+  max-width:400px;line-height:1.7;
+  margin-bottom:32px;
+}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:52px}
+.hero-features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:560px;width:100%}
+.hero-feat{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px;text-align:center;
+  transition:all var(--transition);
+}
+.hero-feat:hover{border-color:var(--accent-purple);transform:translateY(-2px)}
+.hero-feat-icon{font-size:24px;margin-bottom:8px}
+.hero-feat p{font-size:12px;color:var(--text2);line-height:1.5}
+ 
+/* ===== AUTH PAGES ===== */
+.auth-page{
+  min-height:calc(100vh - var(--nav-h));
+  display:flex;align-items:center;justify-content:center;
+  padding:40px 20px;
+}
+.auth-card{width:360px;max-width:100%}
+.auth-header{margin-bottom:24px}
+.auth-header h2{font-family:var(--font-display);font-size:24px;font-weight:300;font-style:italic;margin-bottom:4px}
+.auth-header p{font-size:13px;color:var(--text2)}
+.auth-divider{
+  text-align:center;font-size:12px;color:var(--text3);
+  margin:12px 0;position:relative;
+}
+.auth-divider::before,.auth-divider::after{
+  content:'';position:absolute;top:50%;width:42%;height:1px;background:var(--border);
+}
+.auth-divider::before{left:0}.auth-divider::after{right:0}
+.google-btn{
+  width:100%;padding:10px;
+  border:1px solid var(--border2);
+  background:var(--surface);
+  border-radius:var(--radius-sm);
+  color:var(--text);font-family:var(--font-body);
+  font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:all var(--transition);
+  margin-bottom:10px;
+}
+.google-btn:hover{background:var(--surface2)}
+.g-logo{
+  width:18px;height:18px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;
+  background:linear-gradient(135deg,#4285f4,#ea4335,#fbbc05,#34a853);
+  color:#fff;flex-shrink:0;
+}
+.error-msg{
+  background:#fff0f0;border:1px solid #ffc0c0;
+  border-radius:var(--radius-sm);padding:10px 14px;
+  font-size:13px;color:#cc3333;margin-bottom:12px;
+  display:none;
+}
+.dark .error-msg{background:#3a1515;border-color:#7a2a2a;color:#f09595}
+.auth-footer{text-align:center;font-size:13px;color:var(--text2);margin-top:16px}
+.auth-footer a{color:var(--accent-purple);text-decoration:none}
+.auth-footer a:hover{text-decoration:underline}
+ 
+/* ===== DASHBOARD ===== */
+.stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{
+  background:var(--surface2);
+  border-radius:var(--radius-sm);
+  padding:14px 16px;
+}
+.stat-label{font-size:11px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px}
+.stat-value{font-size:22px;font-weight:500;color:var(--text)}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:3px}
+ 
+/* MOOD CHART */
+.mini-chart{display:flex;align-items:flex-end;gap:5px;height:80px;margin:8px 0}
+.chart-bar{
+  flex:1;border-radius:5px 5px 0 0;
+  transition:height .4s ease,background .4s;
+  min-width:20px;
+}
+.chart-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text3)}
+ 
+/* RISK */
+.risk-bar{height:8px;border-radius:4px;background:var(--surface3);overflow:hidden;margin:10px 0}
+.risk-fill{height:100%;border-radius:4px;transition:width .5s ease,background .5s}
+.risk-btns{display:flex;gap:6px;margin-bottom:10px}
+.risk-btn{
+  padding:5px 12px;border-radius:7px;font-size:12px;
+  border:1px solid var(--border);background:none;
+  color:var(--text2);cursor:pointer;font-family:var(--font-body);
+  transition:all var(--transition);
+}
+.risk-btn:hover{background:var(--surface2)}
+.risk-btn.rl{border-color:#A8E6CF;color:#0a3d26}
+.risk-btn.rm{border-color:#FAC775;color:#4a2a00}
+.risk-btn.rh{border-color:#F7C1C1;color:#5a1010}
+.dark .risk-btn.rl{color:#A8E6CF}.dark .risk-btn.rm{color:#FAC775}.dark .risk-btn.rh{color:#F7C1C1}
+ 
+/* ===== CHAT ===== */
+.chat-wrapper{display:flex;flex-direction:column;height:calc(100vh - var(--nav-h));overflow:hidden}
+.chat-header{
+  padding:14px 20px;background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.chat-avatar{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent-purple-light),var(--accent-blue));
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.chat-area{
+  flex:1;overflow-y:auto;
+  padding:20px;display:flex;flex-direction:column;gap:14px;
+  background:var(--bg);
+}
+.msg-row{display:flex;flex-direction:column;gap:3px}
+.msg-row.user{align-items:flex-end}
+.msg-row.ai{align-items:flex-start}
+.msg-sender{font-size:11px;color:var(--text3);padding:0 4px}
+.bubble{
+  max-width:72%;padding:11px 16px;
+  border-radius:16px;font-size:14px;line-height:1.6;
+}
+.bubble-user{
+  background:var(--accent-purple);color:#fff;
+  border-bottom-right-radius:4px;
+}
+.bubble-ai{
+  background:var(--surface);
+  border:1px solid var(--border);
+  color:var(--text);
+  border-bottom-left-radius:4px;
+}
+.bubble-alert{
+  background:#fff0f0;border:1px solid #ffc0c0;color:#5a0000;
+  border-radius:var(--radius-sm);padding:12px 16px;
+  max-width:85%;font-size:13px;line-height:1.6;
+}
+.dark .bubble-alert{background:#3a1515;border-color:#7a2a2a;color:#f09595}
+.typing-bubble{display:flex;gap:5px;padding:12px 16px}
+.typing-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--text3);animation:typing 1s infinite;
+}
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.recording-bar{
+  background:#fff0f0;border-top:1px solid #ffc0c0;
+  padding:8px 20px;font-size:12px;color:#cc3333;
+  display:none;align-items:center;gap:8px;flex-shrink:0;
+}
+.recording-bar.show{display:flex}
+.rec-dot{width:8px;height:8px;border-radius:50%;background:var(--alert);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.chat-input-area{
+  padding:14px 20px;background:var(--surface);
+  border-top:1px solid var(--border);flex-shrink:0;
+}
+.chat-input-row{display:flex;gap:8px;align-items:center}
+.chat-input{
+  flex:1;padding:10px 16px;
+  border:1px solid var(--border);
+  border-radius:24px;
+  background:var(--surface2);
+  color:var(--text);font-family:var(--font-body);font-size:14px;
+  outline:none;transition:border-color var(--transition);
+}
+.chat-input:focus{border-color:var(--accent-purple)}
+.chat-input::placeholder{color:var(--text3)}
+.voice-btn{
+  width:40px;height:40px;border-radius:50%;
+  border:1px solid var(--border2);background:none;
+  cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text2);transition:all var(--transition);
+}
+.voice-btn:hover{background:var(--surface2);border-color:var(--accent-purple)}
+.voice-btn.recording{background:var(--alert);border-color:var(--alert);color:#fff}
+.send-btn{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--accent-purple);color:#fff;
+  border:none;cursor:pointer;font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all var(--transition);
+}
+.send-btn:hover{opacity:.85}
+.send-btn:active{transform:scale(.93)}
+ 
+/* ===== PROFESSIONALS ===== */
+.pro-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px;
+  display:flex;gap:14px;align-items:center;
+  margin-bottom:12px;
+  transition:all var(--transition);
+}
+.pro-card:hover{border-color:var(--border2);box-shadow:var(--shadow)}
+.pro-avatar{
+  width:52px;height:52px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+}
+.pro-info{flex:1}
+.pro-name{font-size:15px;font-weight:500;margin-bottom:2px}
+.pro-role{font-size:12px;color:var(--text2);margin-bottom:7px}
+.pro-tags{display:flex;gap:5px;flex-wrap:wrap}
+.pro-actions{display:flex;gap:7px}
+ 
+/* ===== FASKES ===== */
+.map-placeholder{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:24px;
+  text-align:center;margin-bottom:18px;
+  position:relative;overflow:hidden;
+}
+.map-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;opacity:.3;margin-bottom:12px}
+.map-dot{height:60px;background:var(--border);border-radius:6px}
+.map-pin{font-size:28px;margin-bottom:6px}
+.faskes-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px;
+  display:flex;gap:14px;align-items:center;
+  margin-bottom:10px;
+  transition:all var(--transition);
+}
+.faskes-card:hover{border-color:var(--border2)}
+ 
+/* ===== CRISIS ===== */
+.crisis-page{
+  min-height:calc(100vh - var(--nav-h));
+  background:#4a0000;
+  display:flex;align-items:center;justify-content:center;
+  padding:40px 24px;
+}
+.crisis-box{
+  max-width:400px;width:100%;text-align:center;
+}
+.crisis-icon{font-size:52px;margin-bottom:20px;animation:pulse 2s infinite}
+.crisis-box h2{
+  font-family:var(--font-display);
+  font-size:28px;font-weight:300;font-style:italic;
+  color:#fff;margin-bottom:10px;
+}
+.crisis-box p{font-size:14px;color:#ffb3b3;line-height:1.7;margin-bottom:24px}
+.crisis-btns{display:flex;flex-direction:column;gap:10px;max-width:280px;margin:0 auto}
+.crisis-hotline{
+  font-size:13px;color:#ff8888;margin-top:16px;
+  padding:10px;background:rgba(255,255,255,.07);
+  border-radius:var(--radius-sm);
+}
+.crisis-back{
+  margin-top:16px;background:none;border:1px solid rgba(255,255,255,.2);
+  color:#ffb3b3;padding:8px 20px;border-radius:8px;
+  font-family:var(--font-body);font-size:13px;cursor:pointer;
+  transition:all var(--transition);
+}
+.crisis-back:hover{background:rgba(255,255,255,.1)}
+ 
+/* ===== MODALS ===== */
+.modal-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.5);
+  z-index:1000;align-items:center;justify-content:center;
+  padding:20px;
+}
+.modal-overlay.open{display:flex}
+.modal-box{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;padding:24px;
+  max-width:340px;width:100%;
+  max-height:90vh;overflow-y:auto;
+}
+.modal-title{font-size:16px;font-weight:500;margin-bottom:14px}
+.modal-close{
+  background:none;border:none;font-size:18px;
+  color:var(--text3);cursor:pointer;float:right;
+  line-height:1;transition:color var(--transition);
+}
+.modal-close:hover{color:var(--text)}
+ 
+/* MOOD SELECTOR */
+.mood-row{display:flex;gap:8px;margin:12px 0}
+.mood-btn{
+  flex:1;height:44px;border-radius:9px;
+  border:2px solid transparent;background:var(--surface2);
+  font-size:20px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all var(--transition);
+}
+.mood-btn:hover{border-color:var(--border2);transform:scale(1.05)}
+.mood-btn.selected{border-color:var(--accent-purple);background:var(--surface3)}
+ 
+/* BREATHE */
+.breathe-circle{
+  width:90px;height:90px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent-blue),var(--accent-purple-light));
+  margin:0 auto 16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;
+  transition:transform 2s ease-in-out;
+}
+.breathe-circle.expand{transform:scale(1.55)}
+.breath-text{font-size:14px;color:var(--text2);text-align:center;margin-bottom:14px;min-height:22px}
+ 
+/* ===== NOTIFICATION TOAST ===== */
+.toast{
+  position:fixed;bottom:24px;right:24px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:12px 18px;
+  font-size:13px;color:var(--text);
+  box-shadow:var(--shadow);z-index:2000;
+  transform:translateY(80px);opacity:0;
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+}
+.toast.show{transform:translateY(0);opacity:1}
+ 
+/* ===== BOOKING ===== */
+.time-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}
+.time-slot{
+  padding:7px;border:1px solid var(--border);
+  border-radius:7px;text-align:center;
+  font-size:12px;cursor:pointer;
+  transition:all var(--transition);background:none;
+  font-family:var(--font-body);color:var(--text2);
+}
+.time-slot:hover,.time-slot.sel{background:var(--accent-purple);color:#fff;border-color:var(--accent-purple)}
+ 
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:10px}
+ 
+/* ===== ANIMATIONS ===== */
+.fade-in{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+ 
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .sidebar{display:none}
+  .stat-cards{grid-template-columns:repeat(2,1fr)}
+  .hero-features{grid-template-columns:1fr}
+  .grid3{grid-template-columns:1fr}
+  .navbar{padding:0 16px}
+  .nav-links{display:none}
+}
+</style>
+</head>
+<body>
+ 
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <a class="nav-logo" onclick="go('landing')">calmy</a>
+  <div class="nav-links" id="nav-links">
+    <button class="nav-link" onclick="go('dashboard')" data-page="dashboard">Dashboard</button>
+    <button class="nav-link" onclick="go('chat')" data-page="chat">Chat</button>
+    <button class="nav-link" onclick="go('professionals')" data-page="professionals">Professionals</button>
+    <button class="nav-link" onclick="go('faskes')" data-page="faskes">Facilities</button>
+  </div>
+  <div class="nav-controls">
+    <button class="toggle-pill" onclick="toggleLang()" id="lang-btn">
+      <span class="toggle-dot"></span>
+      <span id="lang-label">EN</span>
+    </button>
+    <button class="toggle-pill" onclick="toggleDark()" id="theme-btn">
+      <span id="theme-icon">☀️</span>
+    </button>
+    <button class="btn-nav" id="auth-nav-btn" onclick="go('login')">Login</button>
+  </div>
+</nav>
+ 
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+ 
+<!-- ===== PAGE: LANDING ===== -->
+<div class="page active" id="page-landing">
+  <div class="hero">
+    <div class="hero-icon">🌿</div>
+    <h1 id="hero-title">A calm space<br><span>for your mind</span></h1>
+    <p id="hero-sub">AI-powered mental wellness support. Talk, reflect, and find your path to healing — in a safe, private space.</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary btn-lg" onclick="go('login')" id="hero-cta">Start sharing</button>
+      <button class="btn btn-outline btn-lg" onclick="go('dashboard')">See demo</button>
+    </div>
+    <div class="hero-features">
+      <div class="hero-feat">
+        <div class="hero-feat-icon">💬</div>
+        <p id="feat-1">AI Chat Support — talk anytime, no judgment</p>
+      </div>
+      <div class="hero-feat">
+        <div class="hero-feat-icon">🧘</div>
+        <p id="feat-2">Coping Tools — breathing, grounding, journaling</p>
+      </div>
+      <div class="hero-feat">
+        <div class="hero-feat-icon">👨‍⚕️</div>
+        <p id="feat-3">Professional Referrals — connect when you're ready</p>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ===== PAGE: LOGIN ===== -->
+<div class="page" id="page-login">
+  <div class="auth-page">
+    <div class="card auth-card">
+      <div class="auth-header">
+        <h2 id="login-h">Welcome back</h2>
+        <p id="login-sub">Sign in to continue your journey</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" placeholder="you@email.com" id="login-email">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" placeholder="••••••••" id="login-pass"
+          onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="error-msg" id="login-err">
+        ⚠️ Incorrect password. Please try again.
+      </div>
+      <button class="btn btn-primary btn-block" onclick="doLogin()" style="margin-bottom:10px" id="login-btn">Sign in</button>
+      <div class="auth-divider">or</div>
+      <button class="google-btn" onclick="go('dashboard')">
+        <span class="g-logo">G</span>
+        Continue with Google
+      </button>
+      <div class="auth-footer" id="login-footer">
+        No account? <a href="#" onclick="go('register');return false" id="login-link">Register now</a>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ===== PAGE: REGISTER ===== -->
+<div class="page" id="page-register">
+  <div class="auth-page">
+    <div class="card auth-card">
+      <div class="auth-header">
+        <h2 id="reg-h">Create your account</h2>
+        <p id="reg-sub">Join Calmy — it's free and confidential</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Full name</label>
+        <input class="form-input" type="text" placeholder="Your name" id="reg-name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" placeholder="you@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" placeholder="At least 8 characters">
+      </div>
+      <div class="form-group">
+        <label class="form-label">I'm seeking support for</label>
+        <select class="form-input">
+          <option>Anxiety &amp; Stress</option>
+          <option>Depression</option>
+          <option>Relationship issues</option>
+          <option>Grief &amp; Loss</option>
+          <option>General wellbeing</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="go('dashboard')" style="margin-bottom:10px" id="reg-btn">Create account</button>
+      <div class="auth-footer" id="reg-footer">
+        Already have one? <a href="#" onclick="go('login');return false" id="reg-link">Sign in</a>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ===== PAGE: DASHBOARD ===== -->
+<div class="page" id="page-dashboard">
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-section" id="sb-sec-main">Main</div>
+      <button class="sidebar-item active" onclick="go('dashboard')" data-sb="dashboard">
+        <span class="sidebar-icon">📊</span><span id="sb-dashboard">Dashboard</span>
+      </button>
+      <button class="sidebar-item" onclick="go('chat')" data-sb="chat">
+        <span class="sidebar-icon">💬</span><span id="sb-chat">Chat</span>
+      </button>
+      <div class="sidebar-section" id="sb-sec-help">Support</div>
+      <button class="sidebar-item" onclick="go('professionals')" data-sb="professionals">
+        <span class="sidebar-icon">👨‍⚕️</span><span id="sb-pro">Professionals</span>
+      </button>
+      <button class="sidebar-item" onclick="go('faskes')" data-sb="faskes">
+        <span class="sidebar-icon">🏥</span><span id="sb-fask">Facilities</span>
+      </button>
+      <div class="sidebar-section" id="sb-sec-tools">Tools</div>
+      <button class="sidebar-item" onclick="openModal('mood-modal')">
+        <span class="sidebar-icon">😊</span><span id="sb-mood">Log mood</span>
+      </button>
+      <button class="sidebar-item" onclick="openModal('coping-modal')">
+        <span class="sidebar-icon">🧘</span><span id="sb-coping">Coping tools</span>
+      </button>
+    </aside>
+    <div class="main-content fade-in">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:18px" id="dash-greeting">Good morning, Andi 👋 How are you feeling today?</p>
+      <!-- Stat cards -->
+      <div class="stat-cards" style="margin-bottom:20px">
+        <div class="stat-card" style="cursor:pointer" onclick="openModal('mood-modal')">
+          <div class="stat-label" id="stat-mood-lbl">Today's mood</div>
+          <div class="stat-value" id="stat-mood-val">😐</div>
+          <div class="stat-sub" id="stat-mood-sub">Tap to update</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label" id="stat-sess-lbl">Sessions</div>
+          <div class="stat-value">12</div>
+          <div class="stat-sub" id="stat-sess-sub">This month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label" id="stat-streak-lbl">Streak</div>
+          <div class="stat-value">7</div>
+          <div class="stat-sub" id="stat-streak-sub">Days in a row</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Risk level</div>
+          <div class="stat-value"><span class="tag tag-low" id="risk-badge-d">Low</span></div>
+          <div class="stat-sub" id="risk-sub-d">Stable</div>
+        </div>
+      </div>
+ 
+      <div class="grid2" style="margin-bottom:16px">
+        <!-- Mood chart -->
+        <div class="card card-hover" onclick="showToast('Expanded mood view — coming soon!')" style="cursor:pointer">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <span style="font-size:14px;font-weight:500" id="d-chart-lbl">Mood this week</span>
+            <span style="font-size:11px;color:var(--text3)" id="d-expand">Click to expand</span>
+          </div>
+          <div class="mini-chart" id="mini-chart"></div>
+          <div class="chart-labels">
+            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+          </div>
+        </div>
+        <!-- Risk indicator -->
+        <div class="card">
+          <div style="font-size:14px;font-weight:500;margin-bottom:12px" id="d-risk-lbl">Risk indicator</div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:8px" id="d-risk-sim">Simulate state:</div>
+          <div class="risk-btns">
+            <button class="risk-btn rl" onclick="setRisk('low')" id="rb-low">Low</button>
+            <button class="risk-btn rm" onclick="setRisk('medium')" id="rb-med">Medium</button>
+            <button class="risk-btn rh" onclick="setRisk('high')" id="rb-high">High</button>
+          </div>
+          <div class="risk-bar"><div class="risk-fill" id="risk-fill-d" style="width:20%;background:#A8E6CF"></div></div>
+          <div style="font-size:12px;color:var(--text2)" id="risk-text-d">Stable — keep going!</div>
+        </div>
+      </div>
+ 
+      <!-- Recent sessions -->
+      <div class="card">
+        <div style="font-size:14px;font-weight:500;margin-bottom:12px" id="d-hist-lbl">Recent sessions</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="card card-sm card-hover" style="background:var(--surface2);border:none" onclick="go('chat')">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-size:13px;font-weight:500">Session with Calmy AI</div>
+                <div style="font-size:11px;color:var(--text3)">Yesterday, 9:42 PM · 14 messages</div>
+              </div>
+              <span class="tag tag-low" style="font-size:10px">Low risk</span>
+            </div>
+          </div>
+          <div class="card card-sm card-hover" style="background:var(--surface2);border:none" onclick="go('chat')">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-size:13px;font-weight:500">Breathing exercise</div>
+                <div style="font-size:11px;color:var(--text3)">2 days ago · Coping tool</div>
+              </div>
+              <span class="tag tag-blue" style="font-size:10px">Completed</span>
+            </div>
+          </div>
+          <div class="card card-sm card-hover" style="background:var(--surface2);border:none" onclick="go('professionals')">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-size:13px;font-weight:500">Session with Dr. Sari Dewi</div>
+                <div style="font-size:11px;color:var(--text3)">3 days ago · Professional session</div>
+              </div>
+              <span class="tag tag-purple" style="font-size:10px">Professional</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ===== PAGE: CHAT ===== -->
+<div class="page" id="page-chat">
+  <div class="app-layout" style="height:calc(100vh - var(--nav-h));overflow:hidden">
+    <aside class="sidebar">
+      <div class="sidebar-section">Main</div>
+      <button class="sidebar-item" onclick="go('dashboard')"><span class="sidebar-icon">📊</span>Dashboard</button>
+      <button class="sidebar-item active" onclick="go('chat')"><span class="sidebar-icon">💬</span>Chat</button>
+      <div class="sidebar-section">Support</div>
+      <button class="sidebar-item" onclick="go('professionals')"><span class="sidebar-icon">👨‍⚕️</span>Professionals</button>
+      <button class="sidebar-item" onclick="go('faskes')"><span class="sidebar-icon">🏥</span>Facilities</button>
+      <div class="sidebar-section">Tools</div>
+      <button class="sidebar-item" onclick="openModal('coping-modal')"><span class="sidebar-icon">🧘</span>Coping tools</button>
+    </aside>
+    <div class="chat-wrapper" style="flex:1;overflow:hidden">
+      <div class="chat-header">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="chat-avatar">🌿</div>
+          <div>
+            <div style="font-size:14px;font-weight:500">Calmy AI</div>
+            <div style="font-size:11px;color:var(--text3)" id="chat-status">Always here for you</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline btn-sm" onclick="openModal('coping-modal')" id="chat-coping-btn">🧘 Coping tools</button>
+          <button class="btn btn-alert btn-sm" onclick="go('crisis')" id="chat-crisis-btn">🆘 Crisis</button>
+        </div>
+      </div>
+      <div class="chat-area" id="chat-area">
+        <div class="msg-row ai fade-in">
+          <span class="msg-sender">Calmy</span>
+          <div class="bubble bubble-ai" id="first-ai-msg">Hi Andi 👋 I'm really glad you're here. How are you feeling today? There's no rush — take all the time you need.</div>
+        </div>
+      </div>
+      <div class="recording-bar" id="recording-bar">
+        <span class="rec-dot"></span>
+        <span id="rec-txt">Recording... speak now</span>
+      </div>
+      <div class="chat-input-area">
+        <div class="chat-input-row">
+          <button class="voice-btn" onclick="toggleVoice()" id="voice-btn" title="Voice input">🎙️</button>
+          <input class="chat-input" id="chat-in" placeholder="Share how you feel..." onkeydown="if(event.key==='Enter')sendMsg()">
+          <button class="send-btn" onclick="sendMsg()">➤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ===== PAGE: PROFESSIONALS ===== -->
+<div class="page" id="page-professionals">
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">Main</div>
+      <button class="sidebar-item" onclick="go('dashboard')"><span class="sidebar-icon">📊</span>Dashboard</button>
+      <button class="sidebar-item" onclick="go('chat')"><span class="sidebar-icon">💬</span>Chat</button>
+      <div class="sidebar-section">Support</div>
+      <button class="sidebar-item active" onclick="go('professionals')"><span class="sidebar-icon">👨‍⚕️</span>Professionals</button>
+      <button class="sidebar-item" onclick="go('faskes')"><span class="sidebar-icon">🏥</span>Facilities</button>
+    </aside>
+    <div class="main-content fade-in">
+      <p class="page-title" id="pro-title">Mental health professionals</p>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:20px" id="pro-sub">Verified and compassionate — ready to support your journey</p>
+ 
+      <div class="pro-card">
+        <div class="pro-avatar" style="background:linear-gradient(135deg,#A7C7E7,#dceef9)">👩‍⚕️</div>
+        <div class="pro-info">
+          <div class="pro-name">Dr. Sari Dewi, M.Psi</div>
+          <div class="pro-role">Clinical Psychologist · 8 yrs experience</div>
+          <div class="pro-tags">
+            <span class="tag tag-purple">Anxiety</span>
+            <span class="tag tag-purple">Depression</span>
+            <span class="tag tag-purple">CBT</span>
+          </div>
+        </div>
+        <div class="pro-actions">
+          <button class="btn btn-outline btn-sm" onclick="go('chat')">Chat</button>
+          <button class="btn btn-primary btn-sm" onclick="openModal('book-modal')">Book</button>
+        </div>
+      </div>
+ 
+      <div class="pro-card">
+        <div class="pro-avatar" style="background:linear-gradient(135deg,#A8E6CF,#d4f4e6)">👨‍⚕️</div>
+        <div class="pro-info">
+          <div class="pro-name">Dr. Budi Santoso, Sp.KJ</div>
+          <div class="pro-role">Psychiatrist · 12 yrs experience</div>
+          <div class="pro-tags">
+            <span class="tag tag-purple">Trauma</span>
+            <span class="tag tag-purple">PTSD</span>
+            <span class="tag tag-purple">Medication</span>
+          </div>
+        </div>
+        <div class="pro-actions">
+          <button class="btn btn-outline btn-sm" onclick="go('chat')">Chat</button>
+          <button class="btn btn-primary btn-sm" onclick="openModal('book-modal')">Book</button>
+        </div>
+      </div>
+ 
+      <div class="pro-card">
+        <div class="pro-avatar" style="background:linear-gradient(135deg,#CBAACB,#f0d4f0)">👩‍⚕️</div>
+        <div class="pro-info">
+          <div class="pro-name">Dr. Rina Putri, M.Psi</div>
+          <div class="pro-role">Counselor · 5 yrs experience</div>
+          <div class="pro-tags">
+            <span class="tag tag-purple">Stress</span>
+            <span class="tag tag-purple">Family</span>
+            <span class="tag tag-purple">Relationships</span>
+          </div>
+        </div>
+        <div class="pro-actions">
+          <button class="btn btn-outline btn-sm" onclick="go('chat')">Chat</button>
+          <button class="btn btn-primary btn-sm" onclick="openModal('book-modal')">Book</button>
+        </div>
+      </div>
+ 
+      <div class="pro-card">
+        <div class="pro-avatar" style="background:linear-gradient(135deg,#ffd6a5,#fff0e0)">👨‍⚕️</div>
+        <div class="pro-info">
+          <div class="pro-name">Dr. Ahmad Fauzi, M.Psi</div>
+          <div class="pro-role">Psychologist · 10 yrs experience</div>
+          <div class="pro-tags">
+            <span class="tag tag-purple">Grief</span>
+            <span class="tag tag-purple">Burnout</span>
+            <span class="tag tag-purple">Mindfulness</span>
+          </div>
+        </div>
+        <div class="pro-actions">
+          <button class="btn btn-outline btn-sm" onclick="go('chat')">Chat</button>
+          <button class="btn btn-primary btn-sm" onclick="openModal('book-modal')">Book</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ===== PAGE: FASKES ===== -->
+<div class="page" id="page-faskes">
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">Main</div>
+      <button class="sidebar-item" onclick="go('dashboard')"><span class="sidebar-icon">📊</span>Dashboard</button>
+      <button class="sidebar-item" onclick="go('chat')"><span class="sidebar-icon">💬</span>Chat</button>
+      <div class="sidebar-section">Support</div>
+      <button class="sidebar-item" onclick="go('professionals')"><span class="sidebar-icon">👨‍⚕️</span>Professionals</button>
+      <button class="sidebar-item active" onclick="go('faskes')"><span class="sidebar-icon">🏥</span>Facilities</button>
+    </aside>
+    <div class="main-content fade-in">
+      <p class="page-title" id="fask-title">Health facilities nearby</p>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:20px" id="fask-sub">Semarang, Central Java — 5 facilities found</p>
+ 
+      <div class="map-placeholder">
+        <div class="map-grid">
+          <div class="map-dot"></div><div class="map-dot"></div>
+          <div class="map-dot"></div><div class="map-dot"></div>
+        </div>
+        <div class="map-pin">📍</div>
+        <div style="font-size:13px;color:var(--text2)" id="map-txt">Map view · Semarang, Central Java</div>
+      </div>
+ 
+      <div class="faskes-card">
+        <div style="font-size:26px">🏥</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:500">RSUD Dr. Kariadi</div>
+          <div style="font-size:12px;color:var(--text2)">Psychiatry Department · 2.3 km · Open until 21:00</div>
+        </div>
+        <div style="display:flex;gap:7px">
+          <button class="btn btn-green btn-sm" onclick="openModal('nav-modal')">Navigate</button>
+          <button class="btn btn-outline btn-sm" onclick="openModal('call-modal')">Call</button>
+        </div>
+      </div>
+      <div class="faskes-card">
+        <div style="font-size:26px">🏨</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:500">Puskesmas Banyumanik</div>
+          <div style="font-size:12px;color:var(--text2)">Mental Health Clinic · 1.1 km · Open until 16:00</div>
+        </div>
+        <div style="display:flex;gap:7px">
+          <button class="btn btn-green btn-sm" onclick="openModal('nav-modal')">Navigate</button>
+          <button class="btn btn-outline btn-sm" onclick="openModal('call-modal')">Call</button>
+        </div>
+      </div>
+      <div class="faskes-card">
+        <div style="font-size:26px">🧠</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:500">Klinik Jiwa Sehat</div>
+          <div style="font-size:12px;color:var(--text2)">Private Clinic · 3.7 km · Open 24 hrs</div>
+        </div>
+        <div style="display:flex;gap:7px">
+          <button class="btn btn-green btn-sm" onclick="openModal('nav-modal')">Navigate</button>
+          <button class="btn btn-outline btn-sm" onclick="openModal('call-modal')">Call</button>
+        </div>
+      </div>
+      <div class="faskes-card">
+        <div style="font-size:26px">🏛️</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:500">RSJ Dr. Amino Gondohutomo</div>
+          <div style="font-size:12px;color:var(--text2)">Psychiatric Hospital · 6.1 km · Open 24 hrs</div>
+        </div>
+        <div style="display:flex;gap:7px">
+          <button class="btn btn-green btn-sm" onclick="openModal('nav-modal')">Navigate</button>
+          <button class="btn btn-outline btn-sm" onclick="openModal('call-modal')">Call</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ===== PAGE: CRISIS ===== -->
+<div class="page" id="page-crisis">
+  <div class="crisis-page">
+    <div class="crisis-box fade-in">
+      <div class="crisis-icon">🆘</div>
+      <h2 id="crisis-h">You are not alone</h2>
+      <p id="crisis-p">We noticed signs of distress in your recent messages. Please know that help is available right now — you don't have to face this alone.</p>
+      <div class="crisis-btns">
+        <button class="btn" style="background:#fff;color:#7a1a1a;font-size:15px;padding:14px;border-radius:var(--radius);width:100%" onclick="callHotline()">📞 Call hotline now</button>
+        <button class="btn btn-alert" style="font-size:15px;padding:14px;border-radius:var(--radius);width:100%" onclick="go('faskes')">🏥 Get help nearby</button>
+        <button class="btn btn-outline" style="font-size:14px;padding:12px;border-radius:var(--radius);width:100%;border-color:rgba(255,255,255,.3);color:#ffb3b3" onclick="go('professionals')">👨‍⚕️ Talk to a professional</button>
+      </div>
+      <div class="crisis-hotline">
+        <div style="font-size:12px;color:#ffaaaa;margin-bottom:4px">🇮🇩 Into The Light Indonesia</div>
+        <div style="font-size:16px;color:#fff;font-weight:500">119 ext. 8</div>
+        <div style="font-size:11px;color:#ff8888;margin-top:4px">Available 24/7 — free &amp; confidential</div>
+      </div>
+      <button class="crisis-back" onclick="go('chat')" id="crisis-back">← Back to chat</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- ===== MODALS ===== -->
+ 
+<!-- Mood log -->
+<div class="modal-overlay" id="mood-modal" onclick="if(event.target===this)closeModal('mood-modal')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('mood-modal')">✕</button>
+    <div class="modal-title" id="mood-modal-t">How are you feeling?</div>
+    <div class="mood-row" id="mood-row">
+      <button class="mood-btn" onclick="selMood(this,'😭')">😭</button>
+      <button class="mood-btn" onclick="selMood(this,'😔')">😔</button>
+      <button class="mood-btn selected" onclick="selMood(this,'😐')">😐</button>
+      <button class="mood-btn" onclick="selMood(this,'🙂')">🙂</button>
+      <button class="mood-btn" onclick="selMood(this,'😊')">😊</button>
+    </div>
+    <div class="form-group" style="margin-top:12px">
+      <label class="form-label" id="mood-note-lbl">Add a note (optional)</label>
+      <textarea class="form-input" placeholder="What's on your mind today?"></textarea>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-primary" style="flex:1" onclick="saveMood()" id="mood-save-btn">Save</button>
+      <button class="btn btn-outline" onclick="closeModal('mood-modal')" id="mood-cancel-btn">Cancel</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Coping tools -->
+<div class="modal-overlay" id="coping-modal" onclick="if(event.target===this)closeModal('coping-modal')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('coping-modal')">✕</button>
+    <div class="modal-title" id="coping-title">Coping tools</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+      <button class="card card-hover" style="text-align:left;cursor:pointer;border:none;width:100%" onclick="openBreath()">
+        <div style="font-weight:500;font-size:14px;margin-bottom:3px">🌬️ Breathing exercise</div>
+        <div style="font-size:12px;color:var(--text2)">4-7-8 calm breathing technique</div>
+      </button>
+      <button class="card card-hover" style="text-align:left;cursor:pointer;border:none;width:100%" onclick="openGrounding()">
+        <div style="font-weight:500;font-size:14px;margin-bottom:3px">🌍 5-4-3-2-1 grounding</div>
+        <div style="font-size:12px;color:var(--text2)">Reconnect with the present moment</div>
+      </button>
+      <button class="card card-hover" style="text-align:left;cursor:pointer;border:none;width:100%" onclick="closeModal('coping-modal');showToast('Journaling opened!')">
+        <div style="font-weight:500;font-size:14px;margin-bottom:3px">📓 Journal</div>
+        <div style="font-size:12px;color:var(--text2)">Write your thoughts freely</div>
+      </button>
+    </div>
+    <button class="btn btn-outline btn-block" onclick="closeModal('coping-modal')" id="coping-close-btn">Close</button>
+  </div>
+</div>
+ 
+<!-- Breathing -->
+<div class="modal-overlay" id="breath-modal" onclick="if(event.target===this)closeModal('breath-modal')">
+  <div class="modal-box" style="text-align:center">
+    <button class="modal-close" onclick="closeModal('breath-modal')">✕</button>
+    <div class="modal-title">Breathing exercise</div>
+    <div class="breathe-circle" id="breathe-circle">🌬️</div>
+    <div class="breath-text" id="breath-text">Press start to begin</div>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <button class="btn btn-blue" onclick="startBreath()" id="start-breath-btn">Start</button>
+      <button class="btn btn-outline" onclick="stopBreath()">Done</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Grounding -->
+<div class="modal-overlay" id="ground-modal" onclick="if(event.target===this)closeModal('ground-modal')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('ground-modal')">✕</button>
+    <div class="modal-title">5-4-3-2-1 Grounding</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6">Take a slow breath. Then look around and notice:</p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="card card-sm" style="background:var(--surface2);border:none">
+        <strong style="color:var(--accent-purple)">5</strong> things you can <strong>see</strong>
+      </div>
+      <div class="card card-sm" style="background:var(--surface2);border:none">
+        <strong style="color:var(--accent-purple)">4</strong> things you can <strong>touch</strong>
+      </div>
+      <div class="card card-sm" style="background:var(--surface2);border:none">
+        <strong style="color:var(--accent-purple)">3</strong> things you can <strong>hear</strong>
+      </div>
+      <div class="card card-sm" style="background:var(--surface2);border:none">
+        <strong style="color:var(--accent-purple)">2</strong> things you can <strong>smell</strong>
+      </div>
+      <div class="card card-sm" style="background:var(--surface2);border:none">
+        <strong style="color:var(--accent-purple)">1</strong> thing you can <strong>taste</strong>
+      </div>
+    </div>
+    <button class="btn btn-outline btn-block" style="margin-top:14px" onclick="closeModal('ground-modal')">Done — I feel grounded</button>
+  </div>
+</div>
+ 
+<!-- Booking -->
+<div class="modal-overlay" id="book-modal" onclick="if(event.target===this)closeModal('book-modal')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('book-modal')">✕</button>
+    <div class="modal-title" id="book-title">Book a session</div>
+    <div class="form-group">
+      <label class="form-label">Select date</label>
+      <input class="form-input" type="date" id="book-date">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Select time</label>
+      <div class="time-slots">
+        <button class="time-slot sel" onclick="selTime(this)">09:00</button>
+        <button class="time-slot" onclick="selTime(this)">10:00</button>
+        <button class="time-slot" onclick="selTime(this)">11:00</button>
+        <button class="time-slot" onclick="selTime(this)">13:00</button>
+        <button class="time-slot" onclick="selTime(this)">14:00</button>
+        <button class="time-slot" onclick="selTime(this)">16:00</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Session type</label>
+      <select class="form-input">
+        <option>Online video call</option>
+        <option>In-person visit</option>
+        <option>Chat only</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-primary" style="flex:1" onclick="bookSession()" id="book-confirm-btn">Confirm booking</button>
+      <button class="btn btn-outline" onclick="closeModal('book-modal')" id="book-cancel-btn">Cancel</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Navigate -->
+<div class="modal-overlay" id="nav-modal" onclick="if(event.target===this)closeModal('nav-modal')">
+  <div class="modal-box" style="text-align:center">
+    <button class="modal-close" onclick="closeModal('nav-modal')">✕</button>
+    <div style="font-size:40px;margin-bottom:12px">🗺️</div>
+    <div class="modal-title">Open directions</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px">This will open turn-by-turn directions to the facility in your map app.</p>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <button class="btn btn-green" onclick="closeModal('nav-modal');showToast('Opening Google Maps...')">Open in Maps</button>
+      <button class="btn btn-outline" onclick="closeModal('nav-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Call -->
+<div class="modal-overlay" id="call-modal" onclick="if(event.target===this)closeModal('call-modal')">
+  <div class="modal-box" style="text-align:center">
+    <button class="modal-close" onclick="closeModal('call-modal')">✕</button>
+    <div style="font-size:40px;margin-bottom:12px">📞</div>
+    <div class="modal-title">Call facility</div>
+    <div style="font-size:18px;font-weight:500;margin-bottom:4px">+62 24 8413991</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:16px">Mon–Fri, 07:00–21:00 WIB</div>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <button class="btn btn-primary" onclick="closeModal('call-modal');showToast('Initiating call...')">Call now</button>
+      <button class="btn btn-outline" onclick="closeModal('call-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+// ===== STATE =====
+let currentPage = 'landing';
+let isDark = false;
+let lang = 'EN';
+let loggedIn = false;
+let isRecording = false;
+let breathTimer = null;
+let selectedMood = '😐';
+let aiMsgCount = 0;
+ 
+// ===== NAVIGATION =====
+function go(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + page);
+  if (el) {
+    el.classList.add('active');
+    currentPage = page;
+    window.scrollTo(0, 0);
+  }
+  // Update nav active state
+  document.querySelectorAll('[data-page]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.page === page);
+  });
+  // Update sidebar active state
+  document.querySelectorAll('[data-sb]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.sb === page);
+  });
+ 
+  if (page === 'dashboard') buildChart();
+  if (page === 'login') {
+    const today = new Date();
+    document.getElementById('book-date').min = today.toISOString().split('T')[0];
+  }
+}
+ 
+// ===== DARK MODE =====
+function toggleDark() {
+  isDark = !isDark;
+  document.documentElement.classList.toggle('dark', isDark);
+  document.getElementById('theme-icon').textContent = isDark ? '🌙' : '☀️';
+}
+ 
+// ===== LANGUAGE =====
+const T = {
+  EN: {
+    heroTitle: 'A calm space<br><span>for your mind</span>',
+    heroCta: 'Start sharing',
+    heroSub: 'AI-powered mental wellness support. Talk, reflect, and find your path to healing.',
+    feat1: 'AI Chat Support — talk anytime, no judgment',
+    feat2: 'Coping Tools — breathing, grounding, journaling',
+    feat3: 'Professional Referrals — connect when you\'re ready',
+    loginH: 'Welcome back', loginSub: 'Sign in to continue your journey',
+    loginBtn: 'Sign in', loginLink: 'Register now', loginFooter: 'No account?',
+    regH: 'Create your account', regSub: 'Join Calmy — it\'s free and confidential',
+    regBtn: 'Create account', regLink: 'Sign in', regFooter: 'Already have one?',
+    greeting: 'Good morning, Andi 👋 How are you feeling today?',
+    sbMain:'Main',sbHelp:'Support',sbTools:'Tools',
+    sbDash:'Dashboard',sbChat:'Chat',sbPro:'Professionals',sbFask:'Facilities',sbMood:'Log mood',sbCoping:'Coping tools',
+    statMood:'Today\'s mood',statSess:'Sessions',statStreak:'Streak',
+    statMoodSub:'Tap to update',statSessSub:'This month',statStreakSub:'Days in a row',
+    chartLbl:'Mood this week',expand:'Click to expand',riskLbl:'Risk indicator',riskSim:'Simulate state:',
+    rbLow:'Low',rbMed:'Medium',rbHigh:'High',histLbl:'Recent sessions',
+    proTitle:'Mental health professionals',proSub:'Verified and compassionate — ready to support your journey',
+    faskTitle:'Health facilities nearby',faskSub:'Semarang, Central Java — 5 facilities found',
+    mapTxt:'Map view · Semarang, Central Java',
+    crisisH:'You are not alone',
+    crisisP:'We noticed signs of distress in your recent messages. Please know that help is available right now — you don\'t have to face this alone.',
+    crisisBack:'← Back to chat',
+    chatStatus:'Always here for you',
+    chatCoping:'🧘 Coping tools',chatCrisis:'🆘 Crisis',
+    chatPH:'Share how you feel...',
+    authNavBtn:'Login',
+    bookTitle:'Book a session', bookConfirm:'Confirm booking', bookCancel:'Cancel',
+    coupTitle:'Coping tools', copingClose:'Close',
+    moodTitle:'How are you feeling?', moodNoteLbl:'Add a note (optional)', moodSave:'Save', moodCancel:'Cancel',
+    riskTxtLow:'Stable — keep going!', riskTxtMed:'Some stress detected. Try coping tools.', riskTxtHigh:'Please seek support. Crisis mode available.',
+    recTxt:'Recording... speak now',
+  },
+  ID: {
+    heroTitle: 'Ruang tenang<br><span>untuk pikiranmu</span>',
+    heroCta: 'Mulai berbagi',
+    heroSub: 'Dukungan kesehatan mental berbasis AI. Ceritakan, refleksikan, dan temukan jalanmu.',
+    feat1: 'Chat AI — bicara kapan saja, tanpa penilaian',
+    feat2: 'Alat Coping — pernapasan, grounding, jurnal',
+    feat3: 'Rujukan Profesional — terhubung saat kamu siap',
+    loginH: 'Selamat datang', loginSub: 'Masuk untuk melanjutkan perjalananmu',
+    loginBtn: 'Masuk', loginLink: 'Daftar sekarang', loginFooter: 'Belum punya akun?',
+    regH: 'Buat akun baru', regSub: 'Bergabung dengan Calmy — gratis dan rahasia',
+    regBtn: 'Buat akun', regLink: 'Masuk', regFooter: 'Sudah punya akun?',
+    greeting: 'Selamat pagi, Andi 👋 Bagaimana perasaanmu hari ini?',
+    sbMain:'Utama',sbHelp:'Dukungan',sbTools:'Alat',
+    sbDash:'Dasbor',sbChat:'Chat',sbPro:'Profesional',sbFask:'Faskes',sbMood:'Catat suasana',sbCoping:'Alat coping',
+    statMood:'Suasana hari ini',statSess:'Sesi',statStreak:'Streak',
+    statMoodSub:'Ketuk untuk update',statSessSub:'Bulan ini',statStreakSub:'Hari berturut-turut',
+    chartLbl:'Suasana minggu ini',expand:'Klik untuk perluas',riskLbl:'Indikator risiko',riskSim:'Simulasi kondisi:',
+    rbLow:'Rendah',rbMed:'Sedang',rbHigh:'Tinggi',histLbl:'Sesi terkini',
+    proTitle:'Profesional kesehatan mental',proSub:'Terverifikasi dan penuh empati — siap mendukung perjalananmu',
+    faskTitle:'Fasilitas kesehatan terdekat',faskSub:'Semarang, Jawa Tengah — 5 fasilitas ditemukan',
+    mapTxt:'Tampilan peta · Semarang, Jawa Tengah',
+    crisisH:'Kamu tidak sendirian',
+    crisisP:'Kami melihat tanda-tanda tekanan dalam pesanmu. Ketahuilah bahwa bantuan tersedia sekarang — kamu tidak harus menghadapi ini sendiri.',
+    crisisBack:'← Kembali ke chat',
+    chatStatus:'Selalu ada untukmu',
+    chatCoping:'🧘 Alat coping',chatCrisis:'🆘 Darurat',
+    chatPH:'Ceritakan perasaanmu...',
+    authNavBtn:'Masuk',
+    bookTitle:'Pesan sesi', bookConfirm:'Konfirmasi pemesanan', bookCancel:'Batal',
+    coupTitle:'Alat coping', copingClose:'Tutup',
+    moodTitle:'Bagaimana perasaanmu?', moodNoteLbl:'Tambah catatan (opsional)', moodSave:'Simpan', moodCancel:'Batal',
+    riskTxtLow:'Stabil — terus semangat!', riskTxtMed:'Ada tekanan terdeteksi. Coba alat coping.', riskTxtHigh:'Mohon cari dukungan. Mode darurat tersedia.',
+    recTxt:'Merekam... bicaralah sekarang',
+  }
+};
+ 
+function toggleLang() {
+  lang = lang === 'EN' ? 'ID' : 'EN';
+  document.getElementById('lang-label').textContent = lang;
+  applyLang();
+}
+ 
+function s(id, val) {
+  const el = document.getElementById(id);
+  if (el && val !== undefined) el.innerHTML = val;
+}
+ 
+function applyLang() {
+  const t = T[lang];
+  s('hero-title', t.heroTitle);
+  s('hero-sub', t.heroSub);
+  const cta = document.getElementById('hero-cta');
+  if (cta) cta.textContent = t.heroCta;
+  s('feat-1', t.feat1); s('feat-2', t.feat2); s('feat-3', t.feat3);
+  s('login-h', t.loginH); s('login-sub', t.loginSub);
+  const lb = document.getElementById('login-btn'); if (lb) lb.textContent = t.loginBtn;
+  const ll = document.getElementById('login-link'); if (ll) ll.textContent = t.loginLink;
+  s('login-footer', t.loginFooter + ' <a href="#" style="color:var(--accent-purple)" onclick="go(\'register\');return false">' + t.loginLink + '</a>');
+  s('reg-h', t.regH); s('reg-sub', t.regSub);
+  const rb2 = document.getElementById('reg-btn'); if (rb2) rb2.textContent = t.regBtn;
+  s('reg-footer', t.regFooter + ' <a href="#" style="color:var(--accent-purple)" onclick="go(\'login\');return false">' + t.regLink + '</a>');
+  s('dash-greeting', t.greeting);
+  s('sb-sec-main', t.sbMain); s('sb-sec-help', t.sbHelp); s('sb-sec-tools', t.sbTools);
+  s('sb-dashboard', t.sbDash); s('sb-chat', t.sbChat); s('sb-pro', t.sbPro);
+  s('sb-fask', t.sbFask); s('sb-mood', t.sbMood); s('sb-coping', t.sbCoping);
+  s('stat-mood-lbl', t.statMood); s('stat-sess-lbl', t.statSess); s('stat-streak-lbl', t.statStreak);
+  s('stat-mood-sub', t.statMoodSub); s('stat-sess-sub', t.statSessSub); s('stat-streak-sub', t.statStreakSub);
+  s('d-chart-lbl', t.chartLbl); s('d-expand', t.expand);
+  s('d-risk-lbl', t.riskLbl); s('d-risk-sim', t.riskSim);
+  const rl = document.getElementById('rb-low'); if (rl) rl.textContent = t.rbLow;
+  const rm = document.getElementById('rb-med'); if (rm) rm.textContent = t.rbMed;
+  const rh = document.getElementById('rb-high'); if (rh) rh.textContent = t.rbHigh;
+  s('d-hist-lbl', t.histLbl);
+  s('pro-title', t.proTitle); s('pro-sub', t.proSub);
+  s('fask-title', t.faskTitle); s('fask-sub', t.faskSub);
+  s('map-txt', t.mapTxt);
+  s('crisis-h', t.crisisH); s('crisis-p', t.crisisP);
+  s('crisis-back', t.crisisBack);
+  s('chat-status', t.chatStatus);
+  const cc = document.getElementById('chat-coping-btn'); if (cc) cc.textContent = t.chatCoping;
+  const ccr = document.getElementById('chat-crisis-btn'); if (ccr) ccr.textContent = t.chatCrisis;
+  const ci = document.getElementById('chat-in'); if (ci) ci.placeholder = t.chatPH;
+  s('auth-nav-btn', t.authNavBtn);
+  s('book-title', t.bookTitle);
+  const bc = document.getElementById('book-confirm-btn'); if (bc) bc.textContent = t.bookConfirm;
+  const bca = document.getElementById('book-cancel-btn'); if (bca) bca.textContent = t.bookCancel;
+  s('coping-title', t.coupTitle);
+  const cop = document.getElementById('coping-close-btn'); if (cop) cop.textContent = t.copingClose;
+  s('mood-modal-t', t.moodTitle);
+  s('mood-note-lbl', t.moodNoteLbl);
+  const ms = document.getElementById('mood-save-btn'); if (ms) ms.textContent = t.moodSave;
+  const mc = document.getElementById('mood-cancel-btn'); if (mc) mc.textContent = t.moodCancel;
+  s('rec-txt', t.recTxt);
+  s('first-ai-msg', lang==='ID'
+    ? 'Hei Andi 👋 Senang kamu di sini. Bagaimana perasaanmu hari ini? Tidak perlu tergesa-gesa — ceritakan saja.'
+    : 'Hi Andi 👋 I\'m really glad you\'re here. How are you feeling today? There\'s no rush — take all the time you need.');
+}
+ 
+// ===== AUTH =====
+function doLogin() {
+  const email = document.getElementById('login-email').value;
+  const pass = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-err');
+  if (pass === 'wrong' || (pass.length > 0 && pass === 'error')) {
+    err.style.display = 'block';
+    return;
+  }
+  if (pass.length === 0) {
+    err.style.display = 'block';
+    err.textContent = lang === 'ID' ? '⚠️ Masukkan password terlebih dahulu.' : '⚠️ Please enter your password.';
+    return;
+  }
+  err.style.display = 'none';
+  loggedIn = true;
+  document.getElementById('auth-nav-btn').textContent = lang === 'ID' ? 'Keluar' : 'Logout';
+  go('dashboard');
+}
+ 
+// ===== CHAT =====
+const aiReplies = {
+  EN: [
+    "Thank you for sharing that with me. Can you tell me more about what's been weighing on you?",
+    "I hear you. It sounds like this has been really difficult. You're not alone in this.",
+    "That makes a lot of sense given what you're going through. Have you tried any coping strategies?",
+    "I'm glad you reached out. Remember, it's okay to feel this way. Would you like to try a breathing exercise together?",
+    "You're showing a lot of courage by talking about this. What would feel most supportive right now?",
+    "It sounds like you've been carrying a lot lately. Let's take this one step at a time."
+  ],
+  ID: [
+    "Terima kasih sudah berbagi denganku. Bisakah kamu ceritakan lebih lanjut apa yang sedang membebanimu?",
+    "Aku dengar kamu. Sepertinya ini memang sangat berat. Kamu tidak sendirian dalam hal ini.",
+    "Itu sangat masuk akal mengingat apa yang sedang kamu alami. Pernahkah kamu mencoba teknik coping?",
+    "Aku senang kamu menghubungi. Tidak apa-apa merasa seperti ini. Mau kita coba latihan pernapasan bersama?",
+    "Kamu sangat berani dengan membicarakan ini. Apa yang paling membantu kamu saat ini?",
+    "Sepertinya kamu sudah membawa banyak beban belakangan ini. Mari kita hadapi satu langkah demi satu langkah."
+  ]
+};
+ 
+function addMsg(text, type, isAlert) {
+  const area = document.getElementById('chat-area');
+  const row = document.createElement('div');
+  row.className = 'msg-row ' + type + ' fade-in';
+  if (type === 'ai') {
+    const label = document.createElement('span');
+    label.className = 'msg-sender';
+    label.textContent = 'Calmy';
+    row.appendChild(label);
+  }
+  const bubble = document.createElement('div');
+  if (isAlert) {
+    bubble.className = 'bubble-alert';
+    bubble.innerHTML = text;
+  } else {
+    bubble.className = 'bubble bubble-' + type;
+    bubble.textContent = text;
+  }
+  row.appendChild(bubble);
+  area.appendChild(row);
+  area.scrollTop = area.scrollHeight;
+}
+ 
+function showTyping() {
+  const area = document.getElementById('chat-area');
+  const row = document.createElement('div');
+  row.className = 'msg-row ai fade-in';
+  row.id = 'typing-row';
+  const label = document.createElement('span');
+  label.className = 'msg-sender';
+  label.textContent = 'Calmy';
+  row.appendChild(label);
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble bubble-ai typing-bubble';
+  bubble.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+  row.appendChild(bubble);
+  area.appendChild(row);
+  area.scrollTop = area.scrollHeight;
+  return row;
+}
+ 
+function sendMsg() {
+  const inp = document.getElementById('chat-in');
+  const val = inp.value.trim();
+  if (!val) return;
+  inp.value = '';
+  addMsg(val, 'user', false);
+  const typing = showTyping();
+  const status = document.getElementById('chat-status');
+  status.textContent = lang === 'ID' ? 'Sedang mengetik...' : 'Typing...';
+ 
+  setTimeout(() => {
+    typing.remove();
+    const replies = aiReplies[lang];
+    addMsg(replies[aiMsgCount % replies.length], 'ai', false);
+    status.textContent = T[lang].chatStatus;
+    aiMsgCount++;
+ 
+    if (aiMsgCount === 3) {
+      setTimeout(() => {
+        const alertTxt = lang === 'ID'
+          ? `<strong style="font-size:12px;color:inherit">⚠️ Perhatian</strong><br>Aku mendeteksi beberapa tanda tekanan. Apakah kamu ingin berbicara dengan seorang profesional, atau apakah kamu memerlukan dukungan darurat?<br><br>
+            <button onclick="go('professionals')" style="margin-right:6px;padding:5px 12px;border-radius:7px;border:1px solid rgba(0,0,0,.15);background:none;cursor:pointer;font-size:12px;color:inherit;font-family:inherit">Cari profesional</button>
+            <button onclick="go('crisis')" style="padding:5px 12px;border-radius:7px;border:none;background:var(--alert);color:#fff;cursor:pointer;font-size:12px;font-family:inherit">Dukungan darurat</button>`
+          : `<strong style="font-size:12px;color:inherit">⚠️ Heads up</strong><br>I've noticed some signs of distress in what you're sharing. Would you like to speak with a professional, or do you need immediate support?<br><br>
+            <button onclick="go('professionals')" style="margin-right:6px;padding:5px 12px;border-radius:7px;border:1px solid rgba(0,0,0,.15);background:none;cursor:pointer;font-size:12px;color:inherit;font-family:inherit">Find professional</button>
+            <button onclick="go('crisis')" style="padding:5px 12px;border-radius:7px;border:none;background:var(--alert);color:#fff;cursor:pointer;font-size:12px;font-family:inherit">Crisis support</button>`;
+        addMsg(alertTxt, 'ai', true);
+      }, 600);
+    }
+  }, 900 + Math.random() * 400);
+}
+ 
+function toggleVoice() {
+  isRecording = !isRecording;
+  const btn = document.getElementById('voice-btn');
+  const bar = document.getElementById('recording-bar');
+  btn.classList.toggle('recording', isRecording);
+  btn.textContent = isRecording ? '⏹️' : '🎙️';
+  bar.classList.toggle('show', isRecording);
+  if (!isRecording) {
+    setTimeout(() => {
+      const inp = document.getElementById('chat-in');
+      inp.value = lang === 'ID'
+        ? 'Saya merasa sangat cemas akhir-akhir ini...'
+        : "I've been feeling very anxious lately...";
+      inp.focus();
+    }, 400);
+  }
+}
+ 
+// ===== MODALS =====
+function openModal(id) {
+  closeAllModals();
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+function closeAllModals() {
+  document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+}
+ 
+// ===== MOOD =====
+function selMood(el, emoji) {
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedMood = emoji;
+}
+function saveMood() {
+  const el = document.getElementById('stat-mood-val');
+  if (el) el.textContent = selectedMood;
+  closeModal('mood-modal');
+  showToast(lang === 'ID' ? 'Suasana hati disimpan!' : 'Mood logged!');
+}
+ 
+// ===== BREATHING =====
+function openBreath() { closeModal('coping-modal'); openModal('breath-modal'); }
+function openGrounding() { closeModal('coping-modal'); openModal('ground-modal'); }
+ 
+function startBreath() {
+  const circle = document.getElementById('breathe-circle');
+  const txt = document.getElementById('breath-text');
+  let phase = 0;
+  const phases = [
+    { text: lang==='ID'?'Tarik napas... (4 detik)':'Breathe in... (4s)', expand: true, dur: 4000 },
+    { text: lang==='ID'?'Tahan... (7 detik)':'Hold... (7s)', expand: true, dur: 7000 },
+    { text: lang==='ID'?'Hembuskan... (8 detik)':'Breathe out... (8s)', expand: false, dur: 8000 }
+  ];
+  clearTimeout(breathTimer);
+  function next() {
+    const p = phases[phase % 3];
+    txt.textContent = p.text;
+    circle.classList.toggle('expand', p.expand);
+    phase++;
+    breathTimer = setTimeout(next, p.dur);
+  }
+  next();
+}
+function stopBreath() {
+  clearTimeout(breathTimer);
+  const circle = document.getElementById('breathe-circle');
+  const txt = document.getElementById('breath-text');
+  circle.classList.remove('expand');
+  txt.textContent = lang === 'ID' ? 'Tekan mulai untuk memulai' : 'Press start to begin';
+  closeModal('breath-modal');
+}
+ 
+// ===== RISK =====
+function setRisk(level) {
+  const cfg = {
+    low: { w: '20%', bg: '#A8E6CF', cls: 'tag tag-low', label: T[lang].rbLow || 'Low', txt: T[lang].riskTxtLow, sub: 'Stable' },
+    medium: { w: '58%', bg: '#FAC775', cls: 'tag tag-med', label: T[lang].rbMed || 'Medium', txt: T[lang].riskTxtMed, sub: 'Moderate' },
+    high: { w: '92%', bg: '#FF6B6B', cls: 'tag tag-high', label: T[lang].rbHigh || 'High', txt: T[lang].riskTxtHigh, sub: 'Needs attention' }
+  };
+  const c = cfg[level];
+  const fill = document.getElementById('risk-fill-d');
+  const badge = document.getElementById('risk-badge-d');
+  const txt = document.getElementById('risk-text-d');
+  const sub = document.getElementById('risk-sub-d');
+  if (fill) { fill.style.width = c.w; fill.style.background = c.bg; }
+  if (badge) { badge.className = c.cls; badge.textContent = c.label; }
+  if (txt) txt.textContent = c.txt;
+  if (sub) sub.textContent = c.sub;
+  if (level === 'high') {
+    setTimeout(() => showToast(lang === 'ID' ? '⚠️ Risiko tinggi terdeteksi — pertimbangkan mode darurat' : '⚠️ High risk detected — consider crisis support'), 500);
+  }
+}
+ 
+// ===== BOOKING =====
+function selTime(el) {
+  document.querySelectorAll('.time-slot').forEach(t => t.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function bookSession() {
+  closeModal('book-modal');
+  showToast(lang === 'ID' ? '✓ Sesi berhasil dipesan!' : '✓ Session booked successfully!');
+}
+ 
+// ===== HOTLINE =====
+function callHotline() {
+  showToast(lang === 'ID' ? 'Menghubungi 119 ext 8...' : 'Calling 119 ext 8...');
+}
+ 
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+ 
+// ===== CHART =====
+function buildChart() {
+  const chart = document.getElementById('mini-chart');
+  if (!chart) return;
+  chart.innerHTML = '';
+  const vals = [45, 62, 38, 75, 55, 82, 68];
+  const colors = ['#F7C1C1','#A8E6CF','#F7C1C1','#A8E6CF','#B5D4F4','#A8E6CF','#CBAACB'];
+  vals.forEach((v, i) => {
+    const bar = document.createElement('div');
+    bar.className = 'chart-bar';
+    bar.style.height = v + '%';
+    bar.style.background = colors[i];
+    chart.appendChild(bar);
+  });
+}
+ 
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  const today = new Date().toISOString().split('T')[0];
+  const dateEl = document.getElementById('book-date');
+  if (dateEl) { dateEl.min = today; dateEl.value = today; }
+  buildChart();
+});
+</script>
+</body>
+</html>
